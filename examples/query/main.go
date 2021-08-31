@@ -23,8 +23,7 @@ func main() {
 
 	tok := os.Getenv("MONDAY_TOKEN")
 
-	qry := monday.BoardQuery(os.Getenv("MONDAY_BOARD_ID"))
-	gql := qry.String()
+	gql := monday.BoardQuery(os.Getenv("MONDAY_BOARD_ID"))
 
 	cl := monday.NewClient(tok)
 	resp, err := cl.DoGraphQL(gql)

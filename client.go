@@ -38,13 +38,17 @@ func (c *Client) DoJSON(data []byte) (*http.Response, error) {
 	return c.httpClient.Do(req)
 }
 
-func (c *Client) DoGraphQL(graphQuery string) (*http.Response, error) {
-	req := QueryRequest{Query: graphQuery}
+func (c *Client) DoGraphQLString(gql string) (*http.Response, error) {
+	req := QueryRequest{Query: gql}
 	data, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 	return c.DoJSON(data)
+}
+
+func (c *Client) DoGraphQL(gql Query) (*http.Response, error) {
+	return c.DoGraphQLString(gql.String())
 }
 
 type QueryRequest struct {
