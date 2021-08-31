@@ -2,7 +2,6 @@ package monday
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -52,13 +51,6 @@ func WrapQuery(gql string, wrap bool) string {
 		return fmt.Sprintf("query {%s}", gql)
 	}
 	return gql
-}
-
-var rxSpaceMulti = regexp.MustCompile(`\s+`)
-
-func StringCondenseSpace(input string) string {
-	return strings.TrimSpace(
-		rxSpaceMulti.ReplaceAllString(input, " "))
 }
 
 func BoardQuery(boardId string) Query {
