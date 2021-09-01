@@ -1,4 +1,4 @@
-# Go Monday REST API Client
+# Go Monday GraphQL API Client
 
 [![Build Status][build-status-svg]][build-status-url]
 [![Go Report Card][goreport-svg]][goreport-url]
