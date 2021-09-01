@@ -7,7 +7,7 @@
 
 ## Overview
 
-The `go-monday` is a client for the Monday GraphQL API.
+`go-monday` is a simple client for the Monday.coms GraphQL API.
 
 ## Installation
 
