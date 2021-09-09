@@ -47,11 +47,17 @@ func main() {
 	fmtutil.PrintJSON(brds)
 
 	for _, b := range brds.Data.Boards {
-		si, err := simpleitem.BoardSimpleItems(b)
+		sitems, err := simpleitem.BoardSimpleItems(b)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmtutil.PrintJSON(si)
+		fmtutil.PrintJSON(sitems)
+		for i, sitem := range sitems {
+			fmt.Printf("%d. %s\n", i+1, sitem.String())
+		}
+
+		slines := sitems.StringsByStatus("numeric", ". ")
+		fmt.Println(strings.Join(slines, "\n"))
 	}
 
 	fmt.Println("DONE")

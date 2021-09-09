@@ -1,42 +1,61 @@
 package simpleitem
 
 import (
-	"sort"
+	"strings"
 	"time"
 
 	"github.com/grokify/go-monday"
+	"github.com/grokify/simplego/time/timeutil"
+	"github.com/grokify/simplego/type/stringsutil"
 )
 
-type SimpleItems []SimpleItem
-
-func (s SimpleItems) Len() int { return len(s) }
-func (s SimpleItems) Less(i, j int) bool {
-	if s[i].Date == nil && s[j].Date == nil {
-		return false
-	} else if s[i].Date == nil {
-		return false
-	} else if s[j].Date == nil {
-		return true
-	}
-	return s[i].Date.Before(*s[j].Date)
-}
-func (s SimpleItems) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
-
-// Sort is a convenience method.
-func (s SimpleItems) Sort() { sort.Sort(s) }
+const (
+	NoStatus = "NO STATUS"
+	DONE     = "DONE"
+	BLOCKED  = "BLOCKED"
+	TBD      = "TBD"
+	WIP      = "WIP"
+)
 
 type SimpleItem struct {
-	Name                    string
-	Status                  string
-	Date                    *time.Time
-	LastChangedAtStatusDate *time.Time
-	FieldsSimple            []SimpleCell
+	Name                  string
+	Status                string
+	Date                  *time.Time
+	LastChangedStatusDate *time.Time
+	FieldsSimple          []SimpleCell
 }
 
 type SimpleCell struct {
 	Title     string
 	ChangedAt *time.Time
 	Value     string
+}
+
+func (si *SimpleItem) TrimSpace() {
+	si.Name = strings.TrimSpace(si.Name)
+	si.Status = strings.TrimSpace(si.Status)
+}
+
+func (si *SimpleItem) String() string {
+	var parts []string
+	si.TrimSpace()
+	if len(si.Name) > 0 {
+		parts = append(parts, si.Name+":")
+	}
+	if si.Date == nil || timeutil.IsZero(*si.Date) {
+		parts = append(parts, TBD)
+	} else {
+		parts = append(parts, si.Date.Format(timeutil.MonthDay))
+	}
+	siStatus := stringsutil.TrimSpaceOrDefault(
+		strings.ToUpper(si.Status), NoStatus)
+	parts = append(parts, "("+siStatus+")")
+
+	if si.LastChangedStatusDate != nil && !timeutil.IsZero(*si.LastChangedStatusDate) {
+		parts = append(parts, "(updated: "+si.LastChangedStatusDate.Format(timeutil.MonthDay)+")")
+	}
+
+	return strings.Join(parts, " ")
 }
 
 func ColumnValueToSimple(colvals []monday.ColumnValue) []SimpleCell {
@@ -75,15 +94,7 @@ func ItemToSimple(item monday.Item) SimpleItem {
 	}
 	changedAt, err := item.LastChangedAtDateStatus()
 	if err == nil {
-		si.LastChangedAtStatusDate = &changedAt
+		si.LastChangedStatusDate = &changedAt
 	}
 	return si
-}
-
-func BoardSimpleItems(b monday.Board) (SimpleItems, error) {
-	var simps SimpleItems
-	for _, item := range b.Items {
-		simps = append(simps, ItemToSimple(item))
-	}
-	return simps, nil
 }
