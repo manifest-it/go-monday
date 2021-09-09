@@ -1,10 +1,29 @@
 package simpleitem
 
 import (
+	"sort"
 	"time"
 
 	"github.com/grokify/go-monday"
 )
+
+type SimpleItems []SimpleItem
+
+func (s SimpleItems) Len() int { return len(s) }
+func (s SimpleItems) Less(i, j int) bool {
+	if s[i].Date == nil && s[j].Date == nil {
+		return false
+	} else if s[i].Date == nil {
+		return false
+	} else if s[j].Date == nil {
+		return true
+	}
+	return s[i].Date.Before(*s[j].Date)
+}
+func (s SimpleItems) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+// Sort is a convenience method.
+func (s SimpleItems) Sort() { sort.Sort(s) }
 
 type SimpleItem struct {
 	Name                    string
@@ -61,8 +80,8 @@ func ItemToSimple(item monday.Item) SimpleItem {
 	return si
 }
 
-func BoardSimpleItems(b monday.Board) ([]SimpleItem, error) {
-	simps := []SimpleItem{}
+func BoardSimpleItems(b monday.Board) (SimpleItems, error) {
+	var simps SimpleItems
 	for _, item := range b.Items {
 		simps = append(simps, ItemToSimple(item))
 	}
