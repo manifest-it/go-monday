@@ -1,4 +1,4 @@
-# Go Monday GraphQL API Client
+# Monday.com GraphQL API Client for Go
 
 [![Build Status][build-status-svg]][build-status-url]
 [![Go Report Card][goreport-svg]][goreport-url]
