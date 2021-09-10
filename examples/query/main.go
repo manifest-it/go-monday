@@ -14,6 +14,11 @@ import (
 	"github.com/grokify/simplego/fmt/fmtutil"
 )
 
+const (
+	EnvVarMondayToken   = "MONDAY_TOKEN"
+	EnvVarMondayBoardId = "MONDAY_BOARD_ID"
+)
+
 func main() {
 	loaded, err := config.LoadDotEnv(".env", os.Getenv("ENV_PATH"))
 	if err != nil {
@@ -21,9 +26,9 @@ func main() {
 	}
 	fmt.Printf("loaded [%s]\n", strings.Join(loaded, ","))
 
-	tok := os.Getenv("MONDAY_TOKEN")
+	tok := os.Getenv(EnvVarMondayToken)
 
-	gql := monday.BoardQuery(os.Getenv("MONDAY_BOARD_ID"))
+	gql := monday.BoardQuery(os.Getenv(EnvVarMondayBoardId))
 
 	cl := monday.NewClient(tok)
 	resp, err := cl.DoGraphQL(gql)
@@ -53,10 +58,10 @@ func main() {
 		}
 		fmtutil.PrintJSON(sitems)
 		for i, sitem := range sitems {
-			fmt.Printf("%d. %s\n", i+1, sitem.String())
+			fmt.Printf("%d. %s\n", i+1, sitem.String(false))
 		}
 
-		slines := sitems.StringsByStatus("numeric", ". ")
+		slines := sitems.StringsByStatus("numeric", ". ", false)
 		fmt.Println(strings.Join(slines, "\n"))
 	}
 
