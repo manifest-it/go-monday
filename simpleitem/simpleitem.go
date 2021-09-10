@@ -36,7 +36,7 @@ func (si *SimpleItem) TrimSpace() {
 	si.Status = strings.TrimSpace(si.Status)
 }
 
-func (si *SimpleItem) String() string {
+func (si *SimpleItem) String(inclStatus bool) string {
 	var parts []string
 	si.TrimSpace()
 	if len(si.Name) > 0 {
@@ -47,10 +47,11 @@ func (si *SimpleItem) String() string {
 	} else {
 		parts = append(parts, si.Date.Format(timeutil.MonthDay))
 	}
-	siStatus := stringsutil.TrimSpaceOrDefault(
-		strings.ToUpper(si.Status), NoStatus)
-	parts = append(parts, "("+siStatus+")")
-
+	if inclStatus {
+		siStatus := stringsutil.TrimSpaceOrDefault(
+			strings.ToUpper(si.Status), NoStatus)
+		parts = append(parts, "("+siStatus+")")
+	}
 	if si.LastChangedStatusDate != nil && !timeutil.IsZero(*si.LastChangedStatusDate) {
 		parts = append(parts, "(updated: "+si.LastChangedStatusDate.Format(timeutil.MonthDay)+")")
 	}

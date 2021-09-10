@@ -40,11 +40,11 @@ func (s SimpleItems) ByStatus() map[string]SimpleItems {
 	return byStatus
 }
 
-func (s SimpleItems) Strings(bulletType, delimit string) []string {
+func (s SimpleItems) Strings(bulletType, delimit string, inclStatus bool) []string {
 	bulletType = strings.ToLower(strings.TrimSpace(bulletType))
 	lines := []string{}
 	for i, item := range s {
-		str := item.String()
+		str := item.String(inclStatus)
 		if bulletType == "numeric" {
 			str = strconv.Itoa(i+1) + delimit + str
 		} else if len(bulletType) > 0 {
@@ -77,26 +77,19 @@ func (s SimpleItems) Statuses(convert bool, skip []string) []string {
 	return stringsutil.SliceCondenseSpace(statuses, true, true)
 }
 
-func (s SimpleItems) StringsByStatus(bulletType, delimit string) []string {
+func (s SimpleItems) StringsByStatus(bulletType, delimit string, inclStatus bool) []string {
 	lines := []string{}
 	byStatus := s.ByStatus()
-	knownStatuses := []string{DONE, WIP, BLOCKED, NoStatus}
-	for _, knownStatus := range knownStatuses {
-		if items, ok := byStatus[knownStatus]; ok {
-			lines = append(lines, knownStatus)
-			itemsLines := items.Strings(bulletType, delimit)
+	stdStatuses := []string{DONE, WIP, BLOCKED, NoStatus}
+	othStatuses := s.Statuses(true, stdStatuses)
+	allStatuses := append(stdStatuses, othStatuses...)
+	for _, statusName := range allStatuses {
+		if items, ok := byStatus[statusName]; ok {
+			lines = append(lines, statusName)
+			itemsLines := items.Strings(bulletType, delimit, inclStatus)
 			lines = append(lines, itemsLines...)
 		}
 	}
-	otherStatuses := s.Statuses(true, knownStatuses)
-	for _, otherStatus := range otherStatuses {
-		if items, ok := byStatus[otherStatus]; ok {
-			lines = append(lines, otherStatus)
-			itemsLines := items.Strings(bulletType, delimit)
-			lines = append(lines, itemsLines...)
-		}
-	}
-
 	return lines
 }
 
