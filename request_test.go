@@ -12,7 +12,7 @@ var requestTests = []struct {
 	{12345, "query {boards (ids:12345) {name state columns {id title type} owner {id} items {id name state column_values {title id value text}}}}"},
 }
 
-func TestReqest(t *testing.T) {
+func TestRequest(t *testing.T) {
 	for _, tt := range requestTests {
 		gqlTry := BoardQuery(strconv.Itoa(tt.boardId))
 		if tt.gql != gqlTry.String() {
