@@ -9,6 +9,13 @@ import (
 	"github.com/grokify/simplego/type/stringsutil"
 )
 
+const (
+	SortAsc  = "asc"
+	SortDec  = "dec"
+	SortDesc = "desc"
+	SortDsc  = "dsc"
+)
+
 type SimpleItems []SimpleItem
 
 func (s SimpleItems) Len() int { return len(s) }
@@ -25,7 +32,13 @@ func (s SimpleItems) Less(i, j int) bool {
 func (s SimpleItems) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 // Sort is a convenience method.
-func (s SimpleItems) Sort() { sort.Sort(s) }
+func (s SimpleItems) Sort(reverse bool) {
+	if reverse {
+		sort.Sort(sort.Reverse(s))
+	} else {
+		sort.Sort(s)
+	}
+}
 
 func (s SimpleItems) ByStatus() map[string]SimpleItems {
 	byStatus := map[string]SimpleItems{}
@@ -40,9 +53,15 @@ func (s SimpleItems) ByStatus() map[string]SimpleItems {
 	return byStatus
 }
 
-func (s SimpleItems) Strings(bulletType, delimit string, inclStatus bool) []string {
+func (s SimpleItems) Strings(bulletType, delimit, sortType string, inclStatus bool) []string {
 	bulletType = strings.ToLower(strings.TrimSpace(bulletType))
 	lines := []string{}
+	sortType = strings.ToLower(strings.TrimSpace(sortType))
+	if sortType == SortAsc {
+		s.Sort(false)
+	} else if sortType == SortDec || sortType == SortDesc || sortType == SortDsc {
+		s.Sort(true)
+	}
 	for i, item := range s {
 		str := item.String(inclStatus)
 		if bulletType == BulletTypeNumeric {
@@ -77,7 +96,7 @@ func (s SimpleItems) Statuses(convert bool, skip []string) []string {
 	return stringsutil.SliceCondenseSpace(statuses, true, true)
 }
 
-func (s SimpleItems) StringsByStatus(bulletType, delimit string, inclStatus bool) []string {
+func (s SimpleItems) StringsByStatus(bulletType, delimit, sortType string, inclStatus bool) []string {
 	lines := []string{}
 	byStatus := s.ByStatus()
 	stdStatuses := []string{DONE, WIP, BLOCKED, NoStatus}
@@ -86,7 +105,7 @@ func (s SimpleItems) StringsByStatus(bulletType, delimit string, inclStatus bool
 	for _, statusName := range allStatuses {
 		if items, ok := byStatus[statusName]; ok {
 			lines = append(lines, statusName)
-			itemsLines := items.Strings(bulletType, delimit, inclStatus)
+			itemsLines := items.Strings(bulletType, delimit, sortType, inclStatus)
 			lines = append(lines, itemsLines...)
 		}
 	}

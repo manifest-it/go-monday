@@ -61,7 +61,7 @@ func main() {
 			fmt.Printf("%d. %s\n", i+1, sitem.String(false))
 		}
 
-		slines := sitems.StringsByStatus("numeric", ". ", false)
+		slines := sitems.StringsByStatus("numeric", ". ", simpleitem.SortAsc, false)
 		fmt.Println(strings.Join(slines, "\n"))
 	}
 
