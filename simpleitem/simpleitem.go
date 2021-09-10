@@ -15,6 +15,8 @@ const (
 	BLOCKED  = "BLOCKED"
 	TBD      = "TBD"
 	WIP      = "WIP"
+
+	BulletTypeNumeric = "numeric"
 )
 
 type SimpleItem struct {
@@ -89,7 +91,7 @@ func ItemToSimple(item monday.Item) SimpleItem {
 	if err == nil {
 		si.Date = &date
 	}
-	statusCv, err := item.GetColumnValue("Status", true)
+	statusCv, err := item.GetColumnValue(monday.ColumnValueTitleStatus, true)
 	if err == nil && statusCv.Text != nil {
 		si.Status = *statusCv.Text
 	}

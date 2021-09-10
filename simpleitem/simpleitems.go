@@ -45,7 +45,7 @@ func (s SimpleItems) Strings(bulletType, delimit string, inclStatus bool) []stri
 	lines := []string{}
 	for i, item := range s {
 		str := item.String(inclStatus)
-		if bulletType == "numeric" {
+		if bulletType == BulletTypeNumeric {
 			str = strconv.Itoa(i+1) + delimit + str
 		} else if len(bulletType) > 0 {
 			str = bulletType + delimit + str
