@@ -46,8 +46,10 @@ func (si *SimpleItem) String(inclStatus bool) string {
 	}
 	if si.Date == nil || timeutil.IsZero(*si.Date) {
 		parts = append(parts, TBD)
-	} else {
+	} else if si.Date.UTC().Year() == time.Now().UTC().Year() {
 		parts = append(parts, si.Date.Format(timeutil.MonthDay))
+	} else {
+		parts = append(parts, si.Date.Format("_1/_2/06"))
 	}
 	if inclStatus {
 		siStatus := stringsutil.TrimSpaceOrDefault(
