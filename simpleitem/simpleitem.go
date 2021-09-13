@@ -41,7 +41,17 @@ func (si *SimpleItem) TrimSpace() {
 	si.Status = strings.TrimSpace(si.Status)
 }
 
-func (si *SimpleItem) String(inclStatus bool) string {
+func (si *SimpleItem) LinkURL() string {
+	for _, sc := range si.FieldsSimple {
+		sc.LinkURL = strings.TrimSpace(sc.LinkURL)
+		if len(sc.LinkURL) > 0 {
+			return sc.LinkURL
+		}
+	}
+	return ""
+}
+
+func (si *SimpleItem) String(linkify, inclStatus bool) string {
 	var parts []string
 	si.TrimSpace()
 	if len(si.Name) > 0 {
@@ -63,7 +73,14 @@ func (si *SimpleItem) String(inclStatus bool) string {
 		parts = append(parts, "(updated: "+si.LastChangedStatusDate.Format(timeutil.MonthDay)+")")
 	}
 
-	return strings.Join(parts, " ")
+	text := strings.Join(parts, " ")
+	if linkify {
+		linkURL := strings.TrimSpace(si.LinkURL())
+		if len(linkURL) > 0 {
+			return "[" + text + "](" + linkURL + ")"
+		}
+	}
+	return text
 }
 
 func ColumnValueToSimple(colvals []monday.ColumnValue) []SimpleCell {

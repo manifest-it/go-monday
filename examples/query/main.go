@@ -58,10 +58,10 @@ func main() {
 		}
 		fmtutil.PrintJSON(sitems)
 		for i, sitem := range sitems {
-			fmt.Printf("%d. %s\n", i+1, sitem.String(false))
+			fmt.Printf("%d. %s\n", i+1, sitem.String(true, false))
 		}
 
-		slines := sitems.StringsByStatus("numeric", ". ", simpleitem.SortAsc, false)
+		slines := sitems.StringsByStatus("numeric", ". ", simpleitem.SortAsc, true, false)
 		fmt.Println(strings.Join(slines, "\n"))
 	}
 
