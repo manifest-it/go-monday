@@ -49,6 +49,10 @@ type Item struct {
 	ColumnValues []ColumnValue `json:"column_values"`
 }
 
+const (
+	ColumnValueIdLink = "link"
+)
+
 type ColumnValue struct {
 	Id    string  `json:"id"`
 	Title string  `json:"title"`
@@ -57,6 +61,8 @@ type ColumnValue struct {
 }
 
 type ColumnValueValue struct {
+	URL       string     `json:"url,omitempty"`  // "title":"Link", "id":"link",
+	Text      string     `json:"text,omitempty"` // "title":"Link", "id":"link",
 	ChangedAt *time.Time `json:"changed_at"`
 }
 

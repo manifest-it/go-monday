@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/grokify/go-monday"
+	"github.com/grokify/simplego/net/urlutil"
 	"github.com/grokify/simplego/time/timeutil"
 	"github.com/grokify/simplego/type/stringsutil"
 )
@@ -31,6 +32,8 @@ type SimpleCell struct {
 	Title     string
 	ChangedAt *time.Time
 	Value     string
+	LinkURL   string
+	LinkText  string
 }
 
 func (si *SimpleItem) TrimSpace() {
@@ -77,6 +80,14 @@ func ColumnValueToSimple(colvals []monday.ColumnValue) []SimpleCell {
 			cvv, err := monday.ParseColumnValueValue([]byte(*cv.Value))
 			if err == nil {
 				sv.ChangedAt = cvv.ChangedAt
+				if cv.Id == monday.ColumnValueIdLink {
+					cvv.URL = strings.TrimSpace(cvv.URL)
+					cvv.Text = strings.TrimSpace(cvv.Text)
+					if urlutil.IsHttp(cvv.URL, true, true) {
+						sv.LinkURL = cvv.URL
+						sv.LinkText = cvv.Text
+					}
+				}
 			}
 		}
 
