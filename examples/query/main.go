@@ -10,8 +10,8 @@ import (
 
 	"github.com/grokify/go-monday"
 	"github.com/grokify/go-monday/simpleitem"
-	"github.com/grokify/simplego/config"
-	"github.com/grokify/simplego/fmt/fmtutil"
+	"github.com/grokify/mogo/config"
+	"github.com/grokify/mogo/fmt/fmtutil"
 )
 
 const (

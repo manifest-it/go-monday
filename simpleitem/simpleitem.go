@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/grokify/go-monday"
-	"github.com/grokify/simplego/net/urlutil"
-	"github.com/grokify/simplego/time/timeutil"
-	"github.com/grokify/simplego/type/stringsutil"
+	"github.com/grokify/mogo/net/urlutil"
+	"github.com/grokify/mogo/time/timeutil"
+	"github.com/grokify/mogo/type/stringsutil"
 )
 
 const (
