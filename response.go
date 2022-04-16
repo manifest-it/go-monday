@@ -15,7 +15,7 @@ const (
 )
 
 type Response struct {
-	AccountId int  `json:"account_id"`
+	AccountID int  `json:"account_id"`
 	Data      Data `json:"data"`
 }
 
@@ -24,7 +24,7 @@ type Data struct {
 }
 
 type Board struct {
-	Id      string   `json:"id"`
+	ID      string   `json:"id"`
 	Name    string   `json:"name"`
 	Columns []Column `json:"columns"`
 	Owner   Owner    `json:"owner"`
@@ -33,28 +33,28 @@ type Board struct {
 }
 
 type Column struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Title string `json:"title"`
 	Type  string `json:"type"`
 }
 
 type Owner struct {
-	Id int `json:"id"`
+	ID int `json:"id"`
 }
 
 type Item struct {
-	Id           string        `json:"id"`
+	ID           string        `json:"id"`
 	Name         string        `json:"name"`
 	State        string        `json:"state"`
 	ColumnValues []ColumnValue `json:"column_values"`
 }
 
 const (
-	ColumnValueIdLink = "link"
+	ColumnValueIDLink = "link"
 )
 
 type ColumnValue struct {
-	Id    string  `json:"id"`
+	ID    string  `json:"id"`
 	Title string  `json:"title"`
 	Value *string `json:"value"`
 	Text  *string `json:"text"`

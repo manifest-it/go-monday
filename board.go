@@ -6,12 +6,12 @@ import (
 	"io"
 )
 
-func BoardQuery(boardId string) Query {
+func BoardQuery(boardID string) Query {
 	return Query{
 		Wrap:   true,
 		Object: "boards",
 		Where: map[string]string{
-			"ids": boardId},
+			"ids": boardID},
 		Select: Queries{
 			{Object: "name"},
 			{Object: "state"},
@@ -51,8 +51,8 @@ gql := "query {
 
 */
 
-func QueryBoard(c Client, boardId string) (*Response, error) {
-	gql := BoardQuery(boardId)
+func QueryBoard(c Client, boardID string) (*Response, error) {
+	gql := BoardQuery(boardID)
 	httpResp, err := c.DoGraphQL(gql)
 	if err != nil {
 		return nil, err

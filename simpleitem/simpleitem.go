@@ -97,7 +97,7 @@ func ColumnValueToSimple(colvals []monday.ColumnValue) []SimpleCell {
 			cvv, err := monday.ParseColumnValueValue([]byte(*cv.Value))
 			if err == nil {
 				sv.ChangedAt = cvv.ChangedAt
-				if cv.Id == monday.ColumnValueIdLink {
+				if cv.ID == monday.ColumnValueIDLink {
 					cvv.URL = strings.TrimSpace(cvv.URL)
 					cvv.Text = strings.TrimSpace(cvv.Text)
 					if urlutil.IsHTTP(cvv.URL, true, true) {

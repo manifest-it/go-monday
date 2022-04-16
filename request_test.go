@@ -6,7 +6,7 @@ import (
 )
 
 var requestTests = []struct {
-	boardId int
+	boardID int
 	gql     string
 }{
 	{12345, "query {boards (ids:12345) {name state columns {id title type} owner {id} items {id name state column_values {title id value text}}}}"},
@@ -14,10 +14,10 @@ var requestTests = []struct {
 
 func TestRequest(t *testing.T) {
 	for _, tt := range requestTests {
-		gqlTry := BoardQuery(strconv.Itoa(tt.boardId))
+		gqlTry := BoardQuery(strconv.Itoa(tt.boardID))
 		if tt.gql != gqlTry.String() {
 			t.Errorf("monday.BoardQuery(%d) Want: [%s] Got: [%s]",
-				tt.boardId, tt.gql, gqlTry)
+				tt.boardID, tt.gql, gqlTry)
 		}
 	}
 }
