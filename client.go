@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	MondayApiUrl = "https://api.monday.com/v2"
+	MondayAPIURL = "https://api.monday.com/v2"
 )
 
 type Client struct {
@@ -28,13 +28,12 @@ func (c *Client) DoJSON(data []byte) (*http.Response, error) {
 	}
 	req, err := http.NewRequest(
 		http.MethodPost,
-		MondayApiUrl,
+		MondayAPIURL,
 		bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add(httputilmore.HeaderContentType,
-		httputilmore.ContentTypeAppJsonUtf8)
+	req.Header.Add(httputilmore.HeaderContentType, httputilmore.ContentTypeAppJSONUtf8)
 	return c.httpClient.Do(req)
 }
 

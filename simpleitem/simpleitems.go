@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/grokify/go-monday"
+	monday "github.com/grokify/go-monday"
 	"github.com/grokify/mogo/type/stringsutil"
 )
 

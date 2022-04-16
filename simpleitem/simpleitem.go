@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grokify/go-monday"
+	monday "github.com/grokify/go-monday"
 	"github.com/grokify/mogo/net/urlutil"
 	"github.com/grokify/mogo/time/timeutil"
 	"github.com/grokify/mogo/type/stringsutil"
@@ -100,7 +100,7 @@ func ColumnValueToSimple(colvals []monday.ColumnValue) []SimpleCell {
 				if cv.Id == monday.ColumnValueIdLink {
 					cvv.URL = strings.TrimSpace(cvv.URL)
 					cvv.Text = strings.TrimSpace(cvv.Text)
-					if urlutil.IsHttp(cvv.URL, true, true) {
+					if urlutil.IsHTTP(cvv.URL, true, true) {
 						sv.LinkURL = cvv.URL
 						sv.LinkText = cvv.Text
 					}
