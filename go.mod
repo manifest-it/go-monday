@@ -3,8 +3,8 @@ module github.com/grokify/go-monday
 go 1.18
 
 require (
-	github.com/grokify/goauth v0.16.4
-	github.com/grokify/mogo v0.40.13
+	github.com/grokify/goauth v0.16.5
+	github.com/grokify/mogo v0.41.1
 )
 
 require (
@@ -19,8 +19,9 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/valyala/fastjson v1.6.3 // indirect
-	golang.org/x/net v0.1.0 // indirect
-	golang.org/x/oauth2 v0.1.0 // indirect
+	golang.org/x/exp v0.0.0-20221111204811-129d8d6c17ab // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/oauth2 v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
