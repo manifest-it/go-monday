@@ -20,7 +20,7 @@ const (
 )
 
 func main() {
-	loaded, err := config.LoadDotEnv(".env", os.Getenv("ENV_PATH"))
+	loaded, err := config.LoadDotEnv([]string{".env", os.Getenv("ENV_PATH")}, 1)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -57,7 +57,7 @@ func (si *SimpleItem) String(linkify, inclStatus bool) string {
 	if len(si.Name) > 0 {
 		parts = append(parts, si.Name+":")
 	}
-	if si.Date == nil || timeutil.IsZero(*si.Date) {
+	if si.Date == nil || si.Date.IsZero() {
 		parts = append(parts, TBD)
 	} else if si.Date.UTC().Year() == time.Now().UTC().Year() {
 		parts = append(parts, si.Date.Format(timeutil.MonthDay))
@@ -69,7 +69,7 @@ func (si *SimpleItem) String(linkify, inclStatus bool) string {
 			strings.ToUpper(si.Status), NoStatus)
 		parts = append(parts, "("+siStatus+")")
 	}
-	if si.LastChangedStatusDate != nil && !timeutil.IsZero(*si.LastChangedStatusDate) {
+	if si.LastChangedStatusDate != nil && !si.LastChangedStatusDate.IsZero() {
 		parts = append(parts, "(updated: "+si.LastChangedStatusDate.Format(timeutil.MonthDay)+")")
 	}
 
