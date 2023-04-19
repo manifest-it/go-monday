@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/grokify/goauth"
+	"github.com/grokify/goauth/authutil"
 	"github.com/grokify/mogo/net/http/httputilmore"
 )
 
@@ -19,7 +19,7 @@ type Client struct {
 }
 
 func NewClient(token string) Client {
-	return Client{httpClient: goauth.NewClientAuthzTokenSimple("", token)}
+	return Client{httpClient: authutil.NewClientAuthzTokenSimple("", token)}
 }
 
 func (c *Client) DoJSON(data []byte) (*http.Response, error) {
