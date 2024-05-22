@@ -1,6 +1,8 @@
-module github.com/grokify/go-monday
+module github.com/manifest-it/go-monday
 
-go 1.18
+go 1.21
+
+toolchain go1.22.3
 
 require (
 	github.com/grokify/goauth v0.20.8

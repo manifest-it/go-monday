@@ -33,7 +33,7 @@ func (q Query) String() string {
 	return WrapQuery(strings.Join(qParts, " "), q.Wrap)
 }
 
-type Where map[string]string
+type Where map[string]any
 
 func (w Where) String() string {
 	if len(w) == 0 {
@@ -41,9 +41,41 @@ func (w Where) String() string {
 	}
 	parts := []string{}
 	for k, v := range w {
-		parts = append(parts, k+":"+v)
+		switch v := v.(type) {
+		case string:
+			parts = append(parts, fmt.Sprintf("%s:%s", k, v))
+		case []string:
+			parts = append(parts, fmt.Sprintf("%s:[%s]", k, strings.Join(v, ", ")))
+		case map[string]any:
+			var rules []string
+			for _, rule := range v["rules"].([]map[string]any) {
+				var ruleParts []string
+				for rk, rv := range rule {
+					ruleParts = append(ruleParts, formatRule(rk, rv))
+				}
+				rules = append(rules, "{"+strings.Join(ruleParts, ", ")+"}")
+			}
+			parts = append(parts, fmt.Sprintf("%s: { rules: [%s] }", k, strings.Join(rules, ", ")))
+		default:
+			parts = append(parts, fmt.Sprintf("%s:unknown_type", k))
+		}
 	}
-	return "(" + strings.Join(parts, ",") + ")"
+	return "(" + strings.Join(parts, ", ") + ")"
+}
+
+func formatRule(key string, value interface{}) string {
+	switch key {
+	case "operator":
+		return fmt.Sprintf("%s: %v", key, value)
+	case "compare_value":
+		var formattedValues []string
+		for _, val := range value.([]string) {
+			formattedValues = append(formattedValues, fmt.Sprintf("\"%s\"", val))
+		}
+		return fmt.Sprintf("%s: [%s]", key, strings.Join(formattedValues, ", "))
+	default:
+		return fmt.Sprintf("%s: \"%v\"", key, value)
+	}
 }
 
 func WrapQuery(gql string, wrap bool) string {

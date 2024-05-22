@@ -14,22 +14,58 @@ const (
 	ColumnValueTitleStatus = "Status"
 )
 
-type Response struct {
-	AccountID int  `json:"account_id"`
-	Data      Data `json:"data"`
+type ItemsResponse struct {
+	AccountID int `json:"account_id"`
+	Data      struct {
+		Boards []BoardItems `json:"boards"`
+	} `json:"data"`
 }
 
-type Data struct {
-	Boards []Board `json:"boards"`
+type UsersResponse struct {
+	AccountID int `json:"account_id"`
+	Data      struct {
+		Users []User `json:"users"`
+	} `json:"data"`
 }
 
-type Board struct {
-	ID      string   `json:"id"`
-	Name    string   `json:"name"`
-	Columns []Column `json:"columns"`
-	Owner   Owner    `json:"owner"`
-	Items   []Item   `json:"items"`
-	State   string   `json:"state"`
+type BoardsResponse struct {
+	AccountID int `json:"account_id"`
+	Data      struct {
+		Boards []BoardGroups `json:"boards"`
+	} `json:"data"`
+}
+
+type BoardItems struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Columns   []Column  `json:"columns"`
+	Owners    []Owner   `json:"owners"`
+	ItemsPage ItemsPage `json:"items_page"`
+}
+
+type BoardGroups struct {
+	ID     string  `json:"id"`
+	Name   string  `json:"name"`
+	Groups []Group `json:"groups"`
+}
+type Group struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
+}
+
+type User struct {
+	ID           string     `json:"id"`
+	Name         string     `json:"name"`
+	EmailAddress string     `json:"email"`
+	URL          string     `json:"url"`
+	Admin        bool       `json:"is_admin"`
+	Guest        bool       `json:"is_guest"`
+	ViewOnly     bool       `json:"is_view_only"`
+	CreatedAt    *time.Time `json:"created_at"`
+}
+
+type ItemsPage struct {
+	Items []Item `json:"items"`
 }
 
 type Column struct {
@@ -39,14 +75,37 @@ type Column struct {
 }
 
 type Owner struct {
-	ID int `json:"id"`
+	ID string `json:"id"`
 }
 
 type Item struct {
-	ID           string        `json:"id"`
-	Name         string        `json:"name"`
-	State        string        `json:"state"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	URL   string `json:"url"`
+	Board struct {
+		Name string `json:"name"`
+	} `json:"board"`
+	Creator struct {
+		Name string `json:"name"`
+	} `json:"creator"`
+	Updates      []Update      `json:"updates"`
+	Subscribers  []Subscriber  `json:"subscribers"`
 	ColumnValues []ColumnValue `json:"column_values"`
+	CreatedAt    *time.Time    `json:"created_at"`
+	UpdatedAt    *time.Time    `json:"updated_at"`
+}
+
+type Update struct {
+	ID      string `json:"id"`
+	Creator struct {
+		Name string `json:"name"`
+	} `json:"creator"`
+	Body string `json:"text_body"`
+}
+
+type Subscriber struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 const (

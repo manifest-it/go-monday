@@ -1,17 +1,15 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strings"
+	"time"
 
-	"github.com/grokify/go-monday"
-	"github.com/grokify/go-monday/simpleitem"
 	"github.com/grokify/mogo/config"
 	"github.com/grokify/mogo/fmt/fmtutil"
+	"github.com/manifest-it/go-monday"
 )
 
 const (
@@ -27,42 +25,22 @@ func main() {
 	fmt.Printf("loaded [%s]\n", strings.Join(loaded, ","))
 
 	tok := os.Getenv(EnvVarMondayToken)
-
-	gql := monday.BoardQuery(os.Getenv(EnvVarMondayBoardId))
+	ids := []string{os.Getenv(EnvVarMondayBoardId)}
 
 	cl := monday.NewClient(tok)
-	resp, err := cl.DoGraphQL(gql)
+	resp, data, err := cl.GetItemsBetween(&ids, time.Now(), time.Now())
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("STATUS [%d]\n", resp.StatusCode)
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(string(data))
+	fmtutil.PrintJSON(data)
 
-	var brds monday.Response
-
-	err = json.Unmarshal(data, &brds)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmtutil.PrintJSON(brds)
-
-	for _, b := range brds.Data.Boards {
-		sitems, err := simpleitem.BoardSimpleItems(b)
+	for _, item := range data {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmtutil.PrintJSON(sitems)
-		for i, sitem := range sitems {
-			fmt.Printf("%d. %s\n", i+1, sitem.String(true, false))
-		}
-
-		slines := sitems.StringsByStatus("numeric", ". ", simpleitem.SortAsc, true, false)
-		fmt.Println(strings.Join(slines, "\n"))
+		fmtutil.PrintJSON(item)
 	}
 
 	fmt.Println("DONE")

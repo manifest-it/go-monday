@@ -25,19 +25,8 @@ Features, Issues, and Pull Requests are always welcome.
 
 To contribute:
 
-1. Fork it ( http://github.com/grokify/go-monday/fork )
+1. Fork it ( http://github.com/manifest-it/go-monday/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
-
-Please report issues and feature requests on [Github](https://github.com/grokify/go-monday).
-
- [build-status-svg]: https://github.com/grokify/go-monday/workflows/go%20build/badge.svg?branch=master
- [build-status-url]: https://github.com/grokify/go-monday/actions
- [goreport-svg]: https://goreportcard.com/badge/github.com/grokify/go-monday
- [goreport-url]: https://goreportcard.com/report/github.com/grokify/go-monday
- [docs-godoc-svg]: https://pkg.go.dev/badge/github.com/grokify/go-monday
- [docs-godoc-url]: https://pkg.go.dev/github.com/grokify/go-monday
- [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
- [license-url]: https://github.com/grokify/go-monday/blob/master/LICENSE
