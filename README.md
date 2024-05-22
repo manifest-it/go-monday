@@ -1,10 +1,5 @@
 # Monday.com GraphQL API Client for Go
 
-[![Build Status][build-status-svg]][build-status-url]
-[![Go Report Card][goreport-svg]][goreport-url]
-[![Docs][docs-godoc-svg]][docs-godoc-url]
-[![License][license-svg]][license-url]
-
 ## Overview
 
 `go-monday` is a simple client for the Monday.coms GraphQL API.
