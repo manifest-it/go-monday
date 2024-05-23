@@ -42,8 +42,10 @@ func (w Where) String() string {
 	parts := []string{}
 	for k, v := range w {
 		switch v := v.(type) {
+		case int:
+			parts = append(parts, fmt.Sprintf("%s: %d", k, v))
 		case string:
-			parts = append(parts, fmt.Sprintf("%s:%s", k, v))
+			parts = append(parts, fmt.Sprintf("%s:\"%s\"", k, v))
 		case []string:
 			parts = append(parts, fmt.Sprintf("%s:[%s]", k, strings.Join(v, ", ")))
 		case map[string]any:

@@ -21,6 +21,13 @@ type ItemsResponse struct {
 	} `json:"data"`
 }
 
+type NextItemsResponse struct {
+	AccountID int `json:"account_id"`
+	Data      struct {
+		ItemsPage ItemsPage `json:"next_items_page"`
+	} `json:"data"`
+}
+
 type UsersResponse struct {
 	AccountID int `json:"account_id"`
 	Data      struct {
@@ -65,7 +72,8 @@ type User struct {
 }
 
 type ItemsPage struct {
-	Items []Item `json:"items"`
+	Items  []Item `json:"items"`
+	Cursor string `json:"cursor"`
 }
 
 type Column struct {

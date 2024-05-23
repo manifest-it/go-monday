@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-func GetItemsQuery(boardIDs *[]string, startDate, endDate time.Time) Query {
-	q := Query{
+func GetItemsQuery(boardID string, startDate, endDate time.Time, limit int) Query {
+	return Query{
 		Wrap:   true,
 		Object: "boards",
 		Select: Queries{
@@ -22,6 +22,7 @@ func GetItemsQuery(boardIDs *[]string, startDate, endDate time.Time) Query {
 			}},
 			{
 				Object: "items_page", Select: Queries{
+					{Object: "cursor"},
 					{Object: "items", Select: Queries{
 						{Object: "id"},
 						{Object: "name"},
@@ -64,18 +65,58 @@ func GetItemsQuery(boardIDs *[]string, startDate, endDate time.Time) Query {
 							},
 						},
 					},
+					"limit": limit,
 				},
 			},
 		},
+		Where: map[string]any{
+			"ids": boardID,
+		},
 	}
+}
 
-	if boardIDs != nil {
-		q.Where = map[string]any{
-			"ids": *boardIDs,
-		}
+func GetNextItemsQuery(cursor string, limit int) Query {
+	return Query{
+		Wrap:   true,
+		Object: "next_items_page",
+		Select: Queries{
+			{Object: "cursor"},
+			{Object: "items", Select: Queries{
+				{Object: "id"},
+				{Object: "name"},
+				{Object: "url"},
+				{Object: "created_at"},
+				{Object: "updated_at"},
+				{Object: "creator", Select: Queries{
+					{Object: "name"},
+				}},
+				{Object: "board", Select: Queries{
+					{Object: "name"},
+				}},
+				{Object: "updates", Select: Queries{
+					{Object: "id"},
+					{Object: "text_body"},
+					{Object: "creator", Select: Queries{
+						{Object: "name"},
+					}},
+				}},
+				{Object: "subscribers", Select: Queries{
+					{Object: "id"},
+					{Object: "name"},
+				}},
+				{Object: "created_at"},
+				{Object: "column_values", Select: Queries{
+					{Object: "id"},
+					{Object: "value"},
+					{Object: "text"},
+				}},
+			}},
+		},
+		Where: map[string]any{
+			"cursor": cursor,
+			"limit": limit,
+		},
 	}
-
-	return q
 }
 
 func GetAllUsersQuery() Query {
@@ -95,17 +136,13 @@ func GetAllUsersQuery() Query {
 	}
 }
 
-func GetAllBoardsAndGroupsQuery() Query {
+func GetAllBoardsQuery() Query {
 	return Query{
 		Wrap:   true,
 		Object: "boards",
 		Select: Queries{
 			{Object: "id"},
 			{Object: "name"},
-			{Object: "groups", Select: Queries{
-				{Object: "id"},
-				{Object: "title"},
-			}},
 		},
 	}
 }

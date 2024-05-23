@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -56,8 +57,11 @@ type QueryRequest struct {
 	Query string `json:"query"`
 }
 
-func (c *Client) GetItemsBetween(boardIDs *[]string, startTime, endTime time.Time) (*http.Response, []Item, error) {
-	resp, err := c.DoGraphQL(GetItemsQuery(nil, startTime, endTime))
+func (c *Client) GetItemsBetween(boardID string, startTime, endTime time.Time, limit int) (*http.Response, *ItemsPage, error) {
+	q := GetItemsQuery(boardID, startTime, endTime, limit)
+	log.Println("GetItemsBetween GQL query:", q)
+
+	resp, err := c.DoGraphQL(q)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -72,15 +76,38 @@ func (c *Client) GetItemsBetween(boardIDs *[]string, startTime, endTime time.Tim
 	if err != nil {
 		return nil, nil, err
 	}
-	var items []Item
-	for _, board := range boardsItems.Data.Boards {
-		items = append(items, board.ItemsPage.Items...)
+
+	return resp, &boardsItems.Data.Boards[0].ItemsPage, nil
+}
+
+func (c *Client) GetNextItems(cursor string, limit int) (*http.Response, *ItemsPage, error) {
+	q := GetNextItemsQuery(cursor, limit)
+	log.Println("GetNextItems GQL query:", q)
+
+	resp, err := c.DoGraphQL(q)
+	if err != nil {
+		return nil, nil, err
 	}
-	return resp, items, nil
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var NextItems NextItemsResponse
+	err = json.Unmarshal(data, &NextItems)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return resp, &NextItems.Data.ItemsPage, nil
 }
 
 func (c *Client) GetAllUsers() (*http.Response, []User, error) {
-	resp, err := c.DoGraphQL(GetAllUsersQuery())
+	q := GetAllUsersQuery()
+	log.Println("GetAllUsers GQL query:", q)
+
+	resp, err := c.DoGraphQL(q)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -98,8 +125,12 @@ func (c *Client) GetAllUsers() (*http.Response, []User, error) {
 	return resp, usersResponse.Data.Users, nil
 }
 
-func (c *Client) GetAllBoardsAndGroups() (*http.Response, []BoardGroups, error) {
-	resp, err := c.DoGraphQL(GetAllBoardsAndGroupsQuery())
+func (c *Client) GetAllBoards() (*http.Response, []BoardGroups, error) {
+	q := GetAllBoardsQuery()
+	log.Println("GetAllBoards GQL query:", q)
+
+	resp, err := c.DoGraphQL(q)
+
 	if err != nil {
 		return nil, nil, err
 	}

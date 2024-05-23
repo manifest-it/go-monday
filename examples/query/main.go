@@ -25,10 +25,9 @@ func main() {
 	fmt.Printf("loaded [%s]\n", strings.Join(loaded, ","))
 
 	tok := os.Getenv(EnvVarMondayToken)
-	ids := []string{os.Getenv(EnvVarMondayBoardId)}
 
 	cl := monday.NewClient(tok)
-	resp, data, err := cl.GetItemsBetween(&ids, time.Now(), time.Now())
+	resp, data, err := cl.GetItemsBetween(os.Getenv(EnvVarMondayBoardId), time.Now(), time.Now(), 25)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +35,7 @@ func main() {
 
 	fmtutil.PrintJSON(data)
 
-	for _, item := range data {
+	for _, item := range data.Items {
 		if err != nil {
 			log.Fatal(err)
 		}
