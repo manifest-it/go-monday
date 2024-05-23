@@ -7,7 +7,7 @@
 ## Installation
 
 ```bash
-$ go get github.com/grokify/go-monday/...
+$ go get github.com/manifest-it/go-monday/...
 ```
 
 ## Usage
