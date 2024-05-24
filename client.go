@@ -77,7 +77,13 @@ func (c *Client) GetItemsBetween(boardID string, startTime, endTime time.Time, l
 		return nil, nil, err
 	}
 
-	return resp, &boardsItems.Data.Boards[0].ItemsPage, nil
+	var itemsPage ItemsPage
+
+	if len(boardsItems.Data.Boards) > 0 {
+		itemsPage = boardsItems.Data.Boards[0].ItemsPage
+	}
+
+	return resp, &itemsPage, nil
 }
 
 func (c *Client) GetNextItems(cursor string, limit int) (*http.Response, *ItemsPage, error) {
