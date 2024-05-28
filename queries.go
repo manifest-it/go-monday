@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func GetItemsQuery(boardID string, startDate, endDate time.Time, limit int) Query {
+func GetItemsQuery(boardId string, startDate, endDate time.Time, limit int) Query {
 	return Query{
 		Wrap:   true,
 		Object: "boards",
@@ -70,7 +70,7 @@ func GetItemsQuery(boardID string, startDate, endDate time.Time, limit int) Quer
 			},
 		},
 		Where: map[string]any{
-			"ids": boardID,
+			"ids": boardId,
 		},
 	}
 }
@@ -143,6 +143,26 @@ func GetAllBoardsQuery() Query {
 		Select: Queries{
 			{Object: "id"},
 			{Object: "name"},
+		},
+	}
+}
+
+func GetUserByIdQuery(userId string) Query {
+	return Query{
+		Wrap:   true,
+		Object: "users",
+		Select: Queries{
+			{Object: "id"},
+			{Object: "name"},
+			{Object: "email"},
+			{Object: "url"},
+			{Object: "is_admin"},
+			{Object: "phone"},
+			{Object: "title"},
+			{Object: "location"},
+		},
+		Where: map[string]any{
+			"ids": userId,
 		},
 	}
 }

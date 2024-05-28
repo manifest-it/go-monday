@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -151,4 +152,114 @@ func (c *Client) GetAllBoards() (*http.Response, []BoardGroups, error) {
 	}
 
 	return resp, boardsResponse.Data.Boards, nil
+}
+
+func (c *Client) GetUserById(userId string) (*http.Response, *User, error) {
+	q := GetUserByIdQuery(userId)
+	log.Println("GetUserById GQL query:", q)
+
+	resp, err := c.DoGraphQL(q)
+	if err != nil {
+		return nil, nil, err
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var usersResponse UsersResponse
+	err = json.Unmarshal(data, &usersResponse)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var user User
+	if len(usersResponse.Data.Users) > 0 {
+		user = usersResponse.Data.Users[0]
+	}
+
+	return resp, &user, nil
+}
+
+func (c *Client) CreateItem(item CreateItemPayload) (*http.Response, *CreateItemResponse, error) {
+	boardId, groupId, itemName := item.BoardId, item.GroupId, item.ItemName
+	item.BoardId, item.GroupId, item.ItemName = "", "", ""
+
+	columnValuesJSON, err := json.Marshal(item)
+	if err != nil {
+		log.Fatalf("Error marshalling column values: %v", err)
+	}
+
+	q := fmt.Sprintf(`
+	mutation {
+		create_item(
+			board_id: "%s"
+			group_id: "%s"
+			item_name: "%s"
+			column_values: %q
+		) {
+			id
+			url
+		}
+	}`, boardId, groupId, itemName, columnValuesJSON)
+
+	log.Println("CreateItem GQL query:", q)
+
+	resp, err := c.DoGraphQLString(q)
+	if err != nil {
+		return nil, nil, err
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var itemResp CreateItemResponse
+	err = json.Unmarshal(data, &itemResp)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return resp, &itemResp, nil
+}
+
+func (c *Client) UpdateItem(item UpdateItemPayload) (*http.Response, *UpdateItemResponse, error) {
+	boardId, itemId := item.BoardId, item.ID
+	item.BoardId, item.ID = "", ""
+
+	columnValuesJSON, err := json.Marshal(item)
+	if err != nil {
+		log.Fatalf("Error marshalling column values: %v", err)
+	}
+
+	q := fmt.Sprintf(`
+	mutation {
+		change_multiple_column_values(
+			board_id: "%s"
+			item_id: "%s"
+			column_values: %q
+		) {
+			id
+			url
+		}
+	}`, boardId, itemId, columnValuesJSON)
+
+	log.Println("UpdateItem GQL query:", q)
+
+	resp, err := c.DoGraphQLString(q)
+	if err != nil {
+		return nil, nil, err
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var itemResp UpdateItemResponse
+	err = json.Unmarshal(data, &itemResp)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return resp, &itemResp, nil
 }

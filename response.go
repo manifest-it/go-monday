@@ -1,12 +1,7 @@
 package monday
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"time"
-
-	"github.com/grokify/mogo/time/timeutil"
 )
 
 const (
@@ -43,10 +38,12 @@ type BoardsResponse struct {
 }
 
 type BoardItems struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Columns   []Column  `json:"columns"`
-	Owners    []Owner   `json:"owners"`
+	ID      string   `json:"id"`
+	Name    string   `json:"name"`
+	Columns []Column `json:"columns"`
+	Owners  []struct {
+		ID string `json:"id"`
+	} `json:"owners"`
 	ItemsPage ItemsPage `json:"items_page"`
 }
 
@@ -68,6 +65,9 @@ type User struct {
 	Admin        bool       `json:"is_admin"`
 	Guest        bool       `json:"is_guest"`
 	ViewOnly     bool       `json:"is_view_only"`
+	Phone        string     `json:"phone"`
+	Title        string     `json:"title"`
+	Location     string     `json:"location"`
 	CreatedAt    *time.Time `json:"created_at"`
 }
 
@@ -82,8 +82,39 @@ type Column struct {
 	Type  string `json:"type"`
 }
 
-type Owner struct {
-	ID string `json:"id"`
+type CreateItemPayload struct {
+	ItemName string `json:"item_name,omitempty"`
+	BoardId  string `json:"board_id,omitempty"`
+	GroupId  string `json:"group_id,omitempty"`
+	Assignee string `json:"person"`
+	Status   string `json:"status"`
+}
+
+type UpdateItemPayload struct {
+	ID       string `json:"item_id,omitempty"`
+	BoardId  string `json:"board_id,omitempty"`
+	Assignee string `json:"person"`
+	Status   string `json:"status"`
+}
+
+type CreateItemResponse struct {
+	Data struct {
+		CreateItem struct {
+			ID  string `json:"id"`
+			URL string `json:"url"`
+		} `json:"create_item"`
+	} `json:"data"`
+	AccountID int `json:"account_id"`
+}
+
+type UpdateItemResponse struct {
+	Data struct {
+		UpdateItem struct {
+			ID  string `json:"id"`
+			URL string `json:"url"`
+		} `json:"change_multiple_column_values"`
+	} `json:"data"`
+	AccountID int `json:"account_id"`
 }
 
 type Item struct {
@@ -131,79 +162,4 @@ type ColumnValueValue struct {
 	URL       string     `json:"url,omitempty"`  // "title":"Link", "id":"link",
 	Text      string     `json:"text,omitempty"` // "title":"Link", "id":"link",
 	ChangedAt *time.Time `json:"changed_at"`
-}
-
-func ParseColumnValueValue(data []byte) (ColumnValueValue, error) {
-	var cvv ColumnValueValue
-	err := json.Unmarshal(data, &cvv)
-	return cvv, err
-}
-
-func (item *Item) GetColumnValue(name string, errorOnDupe bool) (ColumnValue, error) {
-	cvs := []ColumnValue{}
-
-	for _, cv := range item.ColumnValues {
-		if cv.Title == name {
-			cvs = append(cvs, cv)
-		}
-	}
-	if len(cvs) == 0 {
-		return ColumnValue{}, fmt.Errorf("column value not found [%s]", name)
-	} else if len(cvs) > 1 && errorOnDupe {
-		return ColumnValue{}, fmt.Errorf("more than one column values found for [%s] count [%d]",
-			name, len(cvs))
-	}
-	return cvs[0], nil
-}
-
-func (item *Item) Date() (time.Time, error) {
-	dateCv, err := item.GetColumnValue("Date", true)
-	if err != nil {
-		return time.Now(), err
-	}
-	/*
-		"title":"Date",
-		"id":"date4",
-		"value":"{\"date\":\"2021-08-03\",\"icon\":null,\"changed_at\":\"2021-08-06T16:49:57.071Z\"}",
-		"text":"2021-08-03"
-	*/
-	if dateCv.Text == nil {
-		return time.Now(), errors.New("date text is nil")
-	}
-	return time.Parse(timeutil.RFC3339FullDate, *dateCv.Text)
-}
-
-func (item *Item) FieldsSimple() map[string]string {
-	msi := map[string]string{}
-	for _, cv := range item.ColumnValues {
-		if cv.Text == nil {
-			msi[cv.Title] = ""
-		} else {
-			msi[cv.Title] = *cv.Text
-		}
-	}
-	return msi
-}
-
-func (item *Item) LastChangedAtDateStatus() (time.Time, error) {
-	dates := []time.Time{}
-	dtCv, err := item.GetColumnValue(ColumnValueTitleDate, true)
-	if err == nil && dtCv.Value != nil {
-		cvv, err := ParseColumnValueValue([]byte(*dtCv.Value))
-		if err == nil && cvv.ChangedAt != nil {
-			dates = append(dates, *cvv.ChangedAt)
-		}
-	}
-	stCv, err := item.GetColumnValue(ColumnValueTitleStatus, true)
-	if err == nil && stCv.Value != nil {
-		cvv, err := ParseColumnValueValue([]byte(*stCv.Value))
-		if err == nil && cvv.ChangedAt != nil {
-			dates = append(dates, *cvv.ChangedAt)
-		}
-	}
-	latest, err := timeutil.Latest(dates, true)
-	if err != nil {
-		return timeutil.TimeZeroRFC3339(), nil
-	}
-	return latest, nil
 }
