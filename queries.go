@@ -143,6 +143,10 @@ func GetAllBoardsQuery() Query {
 		Select: Queries{
 			{Object: "id"},
 			{Object: "name"},
+			{Object: "groups", Select: Queries{
+				{Object: "id"},
+				{Object: "title"},
+			}},
 		},
 	}
 }
