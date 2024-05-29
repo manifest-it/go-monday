@@ -58,6 +58,11 @@ type QueryRequest struct {
 	Query string `json:"query"`
 }
 
+type ErrorResponse struct {
+	StatusCode int    `json:"status_code"`
+	ErrorCode  string `json:"error_code"`
+}
+
 func (c *Client) GetItemsBetween(boardID string, startTime, endTime time.Time, limit int) (*http.Response, *ItemsPage, error) {
 	q := GetItemsQuery(boardID, startTime, endTime, limit)
 	log.Println("GetItemsBetween ", startTime.Format("2006-01-02 15:04"), endTime.Format("2006-01-02 15:04"))
@@ -70,6 +75,13 @@ func (c *Client) GetItemsBetween(boardID string, startTime, endTime time.Time, l
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	var errResp ErrorResponse
+	if err := json.Unmarshal(data, &errResp); err == nil {
+		if errResp.StatusCode == http.StatusTooManyRequests {
+			return &http.Response{StatusCode: errResp.StatusCode}, nil, errors.New("too many requests")
+		}
 	}
 
 	var boardsItems ItemsResponse
